@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { BrowserRouter as Router, Switch } from "react-router-dom";
 
-function App() {
+import { initAuth } from "./actions/authActions";
+import routes from "./routes";
+import AppMetaContainer from "components/Meta/AppMetaContainer";
+import RouteWithSubRoutes from "./templates/RouteWithSubRoutes";
+import history from "./utils/history";
+
+const App = (props) => {
+  useEffect(() => {
+    props.initAuth();
+  }, [props]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={history}>
+      <AppMetaContainer />
+      <Switch>
+        {routes.map((route, i) => (
+          <RouteWithSubRoutes key={i} {...route} />
+        ))}
+      </Switch>
+    </Router>
   );
-}
+};
+const mapDispatchToProps = {
+  initAuth: initAuth,
+};
+const mapStateToProps = () => ({});
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
